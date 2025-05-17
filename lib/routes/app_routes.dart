@@ -3,7 +3,7 @@ import '../screens/screens.dart';
 import '../models/models.dart';
 
 class AppRoutes {
-  static const String initialRoute = 'estadisticas';
+  static const String initialRoute = 'home';
 
   static final List<MenuOption> menuOptions = [
     MenuOption(
@@ -22,4 +22,5 @@ class AppRoutes {
 
     return appRoutes;
   }
+
 }
