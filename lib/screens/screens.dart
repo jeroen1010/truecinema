@@ -1,0 +1,1 @@
+export 'package:truecinema/screens/home_screen.dart';
