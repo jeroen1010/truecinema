@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:truecinema/screens/login_screen.dart';
+import 'package:truecinema/screens/registro_screen.dart';
 import '../screens/screens.dart';
 import '../models/models.dart';
 
 class AppRoutes {
-  static const String initialRoute = 'user';
+  static const String initialRoute = 'login';
 
   static final List<MenuOption> menuOptions = [
     MenuOption(
@@ -16,6 +18,16 @@ class AppRoutes {
         name: 'Usuarios',
         screen: const UsuariosScreen(),
         icon: Icons.people),
+        MenuOption(
+        route: 'login',
+        name: 'Login',
+        screen: const LoginScreen(),
+        icon: Icons.login),
+         MenuOption(
+        route: 'registro',
+        name: 'Registro',
+        screen: const RegistroScreen(),
+        icon: Icons.person_add),
   ];
 
   static Map<String, Widget Function(BuildContext)> getAppRoutes() {

@@ -12,7 +12,20 @@
           "package_name": "com.example.truecinema"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "574178708884-i5i2eokpogh8n5pdn0ceik6t8umauvr9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.truecinema",
+            "certificate_hash": "050d7f4763430d8e55cb94507226bd3965aa5568"
+          }
+        },
+        {
+          "client_id": "574178708884-fq6l1ii82b08nh2pr9eqd770rq73d1je.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCDfdBpFr7aYFwcwbarzuqIW_iDxbuolBw"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "574178708884-fq6l1ii82b08nh2pr9eqd770rq73d1je.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "574178708884-4s92jn5at9tdlsq01k9u8tqudipbcubo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.truecinema"
+              }
+            }
+          ]
         }
       }
     }
