@@ -3,7 +3,7 @@ import '../screens/screens.dart';
 import '../models/models.dart';
 
 class AppRoutes {
-  static const String initialRoute = 'home';
+  static const String initialRoute = 'user';
 
   static final List<MenuOption> menuOptions = [
     MenuOption(
@@ -11,6 +11,11 @@ class AppRoutes {
         name: 'Home',
         screen: const HomeScreen(),
         icon: Icons.home),
+    MenuOption(
+        route: 'user',
+        name: 'Usuarios',
+        screen: const UsuariosScreen(),
+        icon: Icons.people),
   ];
 
   static Map<String, Widget Function(BuildContext)> getAppRoutes() {
