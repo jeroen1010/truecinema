@@ -348,9 +348,9 @@ class __FormularioState extends State<_Formulario> {
       child: Column(
         children: [
           const SizedBox(height: 40),
-          const Icon(
-            Icons.fitness_center,
-            size: 100,
+          Image.asset(
+            'assets/icono.png',
+            height: 100,
           ),
           const SizedBox(height: 40),
           const Text(
