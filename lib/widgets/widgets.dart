@@ -1,0 +1,1 @@
+export 'package:truecinema/widgets/tapBar_widget.dart';
