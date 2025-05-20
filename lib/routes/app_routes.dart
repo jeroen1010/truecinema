@@ -18,16 +18,31 @@ class AppRoutes {
         name: 'Usuarios',
         screen: const UsuariosScreen(),
         icon: Icons.people),
-        MenuOption(
+    MenuOption(
         route: 'login',
         name: 'Login',
         screen: const LoginScreen(),
         icon: Icons.login),
-         MenuOption(
+    MenuOption(
         route: 'registro',
         name: 'Registro',
         screen: const RegistroScreen(),
         icon: Icons.person_add),
+    MenuOption(
+        route: 'perfil',
+        name: 'perfil',
+        screen: const MiPerfilScreen(),
+        icon: Icons.person_3_outlined),
+    MenuOption(
+        route: 'lista',
+        name: 'lista',
+        screen: const MiListaScreen(),
+        icon: Icons.star),
+    MenuOption(
+        route: 'resenia',
+        name: 'resenia',
+        screen: const ReseniasScreen(),
+        icon: Icons.chat_bubble),
   ];
 
   static Map<String, Widget Function(BuildContext)> getAppRoutes() {

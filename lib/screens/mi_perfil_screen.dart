@@ -1,16 +1,18 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:truecinema/theme/app_theme.dart';
+import 'package:truecinema/widgets/widgets.dart';
 
-class MiPerfilScreen extends StatefulWidget {
+class MiPerfilScreen extends StatelessWidget {
   const MiPerfilScreen({super.key});
 
   @override
-  State<MiPerfilScreen> createState() => _MiPerfilScreenState();
-}
-
-class _MiPerfilScreenState extends State<MiPerfilScreen> {
-  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const MainScaffold(
+      estadoIndex: 4,
+      title: 'Mi Perfil',
+      screen: Center(
+        child: Text('Esta es la pantalla de Mi Perfil'),
+      ),
+    );
   }
 }

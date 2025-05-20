@@ -19,7 +19,7 @@ BottomNavigationBar tapBar({
     items: const [
       BottomNavigationBarItem(
         icon: Icon(Icons.home),
-        label: 'Inicio',
+        label: 'Home',
       ),
       BottomNavigationBarItem(
         icon: Icon(Icons.search),

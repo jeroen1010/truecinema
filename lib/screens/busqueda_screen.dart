@@ -1,16 +1,20 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:truecinema/widgets/widgets.dart';
 
-class BusquedaScreen extends StatefulWidget {
+class BusquedaScreen extends StatelessWidget {
   const BusquedaScreen({super.key});
 
   @override
-  State<BusquedaScreen> createState() => _BusquedaScreenState();
-}
-
-class _BusquedaScreenState extends State<BusquedaScreen> {
-  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const MainScaffold(
+      estadoIndex: 1,
+      title: 'Buscar',
+      screen: Center(
+        child: Text(
+          'Pantalla de Búsqueda',
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
+    );
   }
 }

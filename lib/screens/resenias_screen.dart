@@ -1,16 +1,20 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:truecinema/widgets/widgets.dart';
 
-class ReseniasScreen extends StatefulWidget {
+class ReseniasScreen extends StatelessWidget {
   const ReseniasScreen({super.key});
 
   @override
-  State<ReseniasScreen> createState() => _ReseniasScreenState();
-}
-
-class _ReseniasScreenState extends State<ReseniasScreen> {
-  @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return const MainScaffold(
+      estadoIndex: 2,
+      title: 'Reseñas',
+      screen: Center(
+        child: Text(
+          'Pantalla de Reseñas',
+          style: TextStyle(fontSize: 18),
+        ),
+      ),
+    );
   }
 }
