@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:truecinema/theme/app_theme.dart';
 import 'package:truecinema/widgets/widgets.dart';
 
 class MiPerfilScreen extends StatelessWidget {

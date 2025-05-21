@@ -10,12 +10,7 @@ class HomeScreen extends StatelessWidget {
     return const MainScaffold(
       estadoIndex: 0,
       title: 'TrueCinema',
-      screen: Center(
-        child: Text(
-          'Bienvenido a TrueCinema',
-          style: TextStyle(fontSize: 18),
-        ),
-      ),
+      screen: HomeContent(),
     );
   }
 }

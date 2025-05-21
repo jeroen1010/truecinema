@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:truecinema/screens/login_screen.dart';
-import 'package:truecinema/screens/registro_screen.dart';
 import '../screens/screens.dart';
 import '../models/models.dart';
 
