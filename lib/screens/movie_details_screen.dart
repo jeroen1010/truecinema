@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:truecinema/services/TMDBservice.dart';
 
 import '../models/models.dart';
 
