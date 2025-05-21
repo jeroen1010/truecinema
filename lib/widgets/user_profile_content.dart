@@ -36,11 +36,9 @@ class _UserProfileContentState extends State<UserProfileContent> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-             /* ProfileImageWidget(
-                initialUrl: userData['fotoPerfil'],
-                googlePhotoUrl: user.photoURL,
-                onImageChanged: (url) => userDoc.update({'fotoPerfil': url}),
-              ),*/
+              ProfileImageWidget(
+                googlePhotoUrl: FirebaseAuth.instance.currentUser?.photoURL,
+              ),
               const SizedBox(height: 24),
               EditableField(
                 label: 'Nombre',
