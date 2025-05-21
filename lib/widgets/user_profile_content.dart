@@ -3,6 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:truecinema/widgets/editable_field.dart';
 import 'package:truecinema/widgets/profile_image_widget.dart';
+import 'package:provider/provider.dart';
+import 'package:truecinema/theme/theme_notifier.dart';
 
 class UserProfileContent extends StatefulWidget {
   const UserProfileContent({super.key});
@@ -36,6 +38,22 @@ class _UserProfileContentState extends State<UserProfileContent> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
+              Align(
+                alignment: Alignment.topRight,
+                child: Consumer<ThemeNotifier>(
+                  builder: (context, themeNotifier, _) {
+                    return IconButton(
+                      icon: Icon(
+                        themeNotifier.isDarkMode ? Icons.dark_mode : Icons.light_mode,
+                        color: Theme.of(context).appBarTheme.iconTheme?.color,
+                      ),
+                      onPressed: () {
+                        themeNotifier.toggleTheme();
+                      },
+                    );
+                  },
+                ),
+              ),
               ProfileImageWidget(
                 googlePhotoUrl: FirebaseAuth.instance.currentUser?.photoURL,
               ),

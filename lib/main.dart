@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:truecinema/firebase_options.dart';
 import 'package:truecinema/routes/app_routes.dart';
-import 'package:truecinema/theme/app_theme.dart';
+import 'package:provider/provider.dart';
+import 'package:truecinema/theme/theme_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -11,7 +12,12 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -19,13 +25,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeNotifier = Provider.of<ThemeNotifier>(context);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'TrueCinema',
-      theme: AppTheme.lightTheme,
+      theme: themeNotifier.currentTheme,
       initialRoute: AppRoutes.initialRoute,
       routes: AppRoutes.getAppRoutes(),
-      //onGenerateRoute: AppRoutes.onGenerateRoute,
       locale: const Locale('es', 'ES'),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -33,7 +39,7 @@ class MyApp extends StatelessWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [
-        Locale('es', 'ES'), 
+        Locale('es', 'ES'),
       ],
     );
   }
