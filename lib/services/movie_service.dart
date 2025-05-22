@@ -6,7 +6,7 @@ class MovieService {
   static const String _apiKey = '1388700110d57af0a67dfbc5490d582a';
   static const String _baseUrl = 'https://api.themoviedb.org/3';
 
-    static Future<List<Movie>> fetchAllMovies({int maxPages = 5}) async {
+    static Future<List<Movie>> fetchAllMovies({int maxPages = 10}) async {
       List<Movie> allMovies = [];
 
       for (int page = 1; page <= maxPages; page++) {

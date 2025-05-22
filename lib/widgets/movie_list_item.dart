@@ -45,62 +45,80 @@ class MovieListItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              // Información a la derecha
+              // Contenido principal
               Expanded(
-                child: Stack(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 4),
-                          Text(
+                    // Fila título + puntuación
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Text(
                             movie.title,
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
+                              color: Colors.black,
                             ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
-                          const SizedBox(height: 6),
-                          Row(
-                            children: [
-                              if (onResenias != null)
-                                ElevatedButton(
-                                  onPressed: onResenias,
-                                  child: const Text("Reseñas"),
-                                ),
-                              if (onResenias != null)
-                                const SizedBox(width: 8),
-                              ElevatedButton.icon(
-                                onPressed: onGuardar,
-                                icon: const Icon(Icons.bookmark_add),
-                                label: const Text("Guardar"),
+                        ),
+                        // Puntuación
+                        Row(
+                          children: [
+                            const Icon(Icons.star, color: Colors.amber, size: 18),
+                            const SizedBox(width: 4),
+                            Text(
+                              movie.voteAverage.toStringAsFixed(1),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: Colors.amber,
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Estrella y puntuación en la esquina superior derecha
-                    Positioned(
-                      top: 0,
-                      right: 8,
-                      child: Row(
-                        children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 18),
-                          const SizedBox(width: 4),
-                          Text(
-                            movie.voteAverage.toStringAsFixed(1),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.amber,
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                      ],
+                    ),
+                    // Sinopsis
+                    const SizedBox(height: 4),
+                    Text(
+                      movie.overview,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 8),
+                    // Botones
+                    Row(
+                      children: [
+                        if (onResenias != null)
+                          ElevatedButton(
+                            onPressed: onResenias,
+                            child: const Text("Reseñas"),
+                          ),
+                        if (onResenias != null)
+                          const SizedBox(width: 8),
+                        // Botón condicional
+                        if (onEliminar != null)
+                          ElevatedButton.icon(
+                            onPressed: onEliminar,
+                            icon: const Icon(Icons.delete),
+                            label: const Text("Eliminar"),
+                          )
+                        else
+                          ElevatedButton.icon(
+                            onPressed: onGuardar,
+                            icon: const Icon(Icons.bookmark_add),
+                            label: const Text("Guardar"),
+                          ),
+                      ],
                     ),
                   ],
                 ),

@@ -41,6 +41,11 @@ class AppRoutes {
         name: 'resenia',
         screen: const ReseniasScreen(),
         icon: Icons.chat_bubble),
+    MenuOption(
+        route: 'busqueda',
+        name: 'busqueda',
+        screen: const ReseniasScreen(),
+        icon: Icons.lens),
   ];
 
   static Map<String, Widget Function(BuildContext)> getAppRoutes() {

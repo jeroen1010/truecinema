@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:truecinema/models/models.dart';
-import 'package:truecinema/screens/movie_details_screen.dart';
+import 'package:truecinema/screens/screens.dart';
 import 'package:truecinema/services/movie_service.dart';
-import 'package:truecinema/widgets/movie_list_item.dart';
-import 'package:truecinema/widgets/movie_search_bar.dart';
 import 'package:truecinema/widgets/widgets.dart';
 import 'package:truecinema/services/TMDBservice.dart';
 
@@ -37,7 +34,6 @@ class _BusquedaScreenState extends State<BusquedaScreen> {
         _isLoading = false;
       });
     } catch (e) {
-      // Manejo de errores
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error al cargar películas: $e')),
       );
@@ -111,7 +107,7 @@ class _BusquedaScreenState extends State<BusquedaScreen> {
                             }
                             },
                         onGuardar: () => _guardarEnMiLista(movie),
-                        onResenias: null, // 🚫 desactivado por ahora
+                        onResenias: null, // desactivado por ahora
                       );
                     },
                   ),
