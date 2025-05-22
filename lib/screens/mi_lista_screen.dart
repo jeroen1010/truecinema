@@ -13,7 +13,6 @@ class MiListaScreen extends StatelessWidget {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    // Capturar el contexto antes de operaciones asíncronas
     final scaffoldContext = context;
     
     try {
@@ -24,7 +23,6 @@ class MiListaScreen extends StatelessWidget {
           .doc(movie.id.toString())
           .delete();
 
-      // Verificar montaje usando el contexto capturado
       if (!scaffoldContext.mounted) return;
       
       ScaffoldMessenger.of(scaffoldContext).showSnackBar(
@@ -53,7 +51,7 @@ class MiListaScreen extends StatelessWidget {
     return MainScaffold(
       estadoIndex: 3,
       title: 'Mi Lista',
-      screen: Builder( // Nuevo Builder wrapper
+      screen: Builder(
         builder: (builderContext) {
           return StreamBuilder<QuerySnapshot>(
             stream: peliculasRef.snapshots(),
@@ -85,6 +83,7 @@ class MiListaScreen extends StatelessWidget {
                   final movie = movies[index];
                   return MovieListItem(
                     movie: movie,
+                    isSaved: true, // ¡Parámetro requerido añadido!
                     onTap: () async {
                       if (!builderContext.mounted) return;
                       try {

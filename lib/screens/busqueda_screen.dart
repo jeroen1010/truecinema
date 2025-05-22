@@ -18,11 +18,26 @@ class _BusquedaScreenState extends State<BusquedaScreen> {
   List<Movie> _allMovies = [];
   List<Movie> _filteredMovies = [];
   bool _isLoading = true;
+  late Stream<QuerySnapshot> _savedMoviesStream;
 
   @override
   void initState() {
     super.initState();
     _fetchMovies();
+    _initSavedMoviesStream();
+  }
+
+  void _initSavedMoviesStream() {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      _savedMoviesStream = FirebaseFirestore.instance
+          .collection('mi_lista')
+          .doc(user.uid)
+          .collection('peliculas')
+          .snapshots();
+    } else {
+      _savedMoviesStream = const Stream.empty();
+    }
   }
 
   Future<void> _fetchMovies() async {
@@ -53,22 +68,24 @@ class _BusquedaScreenState extends State<BusquedaScreen> {
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) return;
 
-    await FirebaseFirestore.instance
-        .collection('mi_lista')
-        .doc(user.uid)
-        .collection('peliculas')
-        .doc(movie.id.toString())
-        .set({
-      'id': movie.id,
-      'title': movie.title,
-      'posterUrl': movie.posterUrl,
-      'overview': movie.overview,
-      'voteAverage': movie.voteAverage,
-    });
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Película guardada en Mi Lista')),
-    );
+    try {
+      await FirebaseFirestore.instance
+          .collection('mi_lista')
+          .doc(user.uid)
+          .collection('peliculas')
+          .doc(movie.id.toString())
+          .set({
+        'id': movie.id,
+        'title': movie.title,
+        'posterUrl': movie.posterUrl,
+        'overview': movie.overview,
+        'voteAverage': movie.voteAverage,
+      });
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al guardar: $e')),
+      );
+    }
   }
 
   @override
@@ -82,32 +99,42 @@ class _BusquedaScreenState extends State<BusquedaScreen> {
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-                    itemCount: _filteredMovies.length,
-                    itemBuilder: (context, index) {
-                      final movie = _filteredMovies[index];
-                      return MovieListItem(
-                        movie: movie,
-                        onTap: () async {
-                            try {
-                            final actores = await TMDbApi().fetchMovieActors(movie.id);
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => MovieDetailsScreen(
-                                  movie: movie,
-                                  actors: actores,
-                                ),
-                              ),
-                            );
-                            } catch (e) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text('Error al cargar actores: $e')),
-                            );
-                            }
+                : StreamBuilder<QuerySnapshot>(
+                    stream: _savedMoviesStream,
+                    builder: (context, savedSnapshot) {
+                      final savedMoviesIds = savedSnapshot.hasData
+                          ? Set.from(savedSnapshot.data!.docs.map((doc) => doc.id))
+                          : <String>{};
+
+                      return ListView.builder(
+                        itemCount: _filteredMovies.length,
+                        itemBuilder: (context, index) {
+                          final movie = _filteredMovies[index];
+                          return MovieListItem(
+                            movie: movie,
+                            isSaved: savedMoviesIds.contains(movie.id.toString()),
+                            onTap: () async {
+                              try {
+                                final actores = await TMDbApi().fetchMovieActors(movie.id);
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => MovieDetailsScreen(
+                                      movie: movie,
+                                      actors: actores,
+                                    ),
+                                  ),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text('Error al cargar actores: $e')),
+                                );
+                              }
                             },
-                        onGuardar: () => _guardarEnMiLista(movie),
-                        onResenias: null, // desactivado por ahora
+                            onGuardar: () => _guardarEnMiLista(movie),
+                            onResenias: null,
+                          );
+                        },
                       );
                     },
                   ),

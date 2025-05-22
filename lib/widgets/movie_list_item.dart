@@ -7,6 +7,7 @@ class MovieListItem extends StatelessWidget {
   final VoidCallback onGuardar;
   final VoidCallback? onResenias;
   final VoidCallback? onEliminar;
+  final bool isSaved;
 
   const MovieListItem({
     super.key,
@@ -15,6 +16,7 @@ class MovieListItem extends StatelessWidget {
     required this.onGuardar,
     this.onResenias,
     this.onEliminar,
+    required this.isSaved,
   });
 
   @override
@@ -114,9 +116,12 @@ class MovieListItem extends StatelessWidget {
                           )
                         else
                           ElevatedButton.icon(
-                            onPressed: onGuardar,
-                            icon: const Icon(Icons.bookmark_add),
-                            label: const Text("Guardar"),
+                            onPressed: isSaved ? null : onGuardar,
+                            icon: Icon(
+                              isSaved ? Icons.check : Icons.bookmark_add,
+                              color: isSaved ? Colors.green : null,
+                            ),
+                            label: Text(isSaved ? "Guardada" : "Guardar"),
                           ),
                       ],
                     ),
