@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:truecinema/screens/crear_resenia_screen.dart';
 import '../models/models.dart';
 
 class MovieListItem extends StatelessWidget {
@@ -8,6 +9,7 @@ class MovieListItem extends StatelessWidget {
   final VoidCallback? onResenias;
   final VoidCallback? onEliminar;
   final bool isSaved;
+  final int reseniasCount;
 
   const MovieListItem({
     super.key,
@@ -17,6 +19,7 @@ class MovieListItem extends StatelessWidget {
     this.onResenias,
     this.onEliminar,
     required this.isSaved,
+    required this.reseniasCount,
   });
 
   @override
@@ -30,7 +33,6 @@ class MovieListItem extends StatelessWidget {
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Imagen de la película
               ClipRRect(
                 borderRadius: BorderRadius.circular(8),
                 child: Image.network(
@@ -47,12 +49,10 @@ class MovieListItem extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 10),
-              // Contenido principal
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Fila título + puntuación
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -69,7 +69,6 @@ class MovieListItem extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        // Puntuación
                         Row(
                           children: [
                             const Icon(Icons.star, color: Colors.amber, size: 18),
@@ -85,7 +84,6 @@ class MovieListItem extends StatelessWidget {
                         ),
                       ],
                     ),
-                    // Sinopsis
                     const SizedBox(height: 4),
                     Text(
                       movie.overview,
@@ -97,7 +95,6 @@ class MovieListItem extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 8),
-                    // Botones
                     Row(
                       children: [
                         if (onResenias != null)
@@ -107,7 +104,38 @@ class MovieListItem extends StatelessWidget {
                           ),
                         if (onResenias != null)
                           const SizedBox(width: 8),
-                        // Botón condicional
+                        Stack(
+                          children: [
+                            IconButton(
+                              icon: const Icon(Icons.chat),
+                              onPressed: () => _openCreateReview(context),
+                            ),
+                            if (reseniasCount > 0)
+                              Positioned(
+                                right: 0,
+                                child: Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red,
+                                    borderRadius: BorderRadius.circular(6),
+                                  ),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 16,
+                                    minHeight: 16,
+                                  ),
+                                  child: Text(
+                                    reseniasCount.toString(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                        const SizedBox(width: 8),
                         if (onEliminar != null)
                           ElevatedButton.icon(
                             onPressed: onEliminar,
@@ -131,6 +159,15 @@ class MovieListItem extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  void _openCreateReview(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CrearReseniaScreen(movie: movie),
       ),
     );
   }

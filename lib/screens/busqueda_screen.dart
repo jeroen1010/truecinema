@@ -110,29 +110,39 @@ class _BusquedaScreenState extends State<BusquedaScreen> {
                         itemCount: _filteredMovies.length,
                         itemBuilder: (context, index) {
                           final movie = _filteredMovies[index];
-                          return MovieListItem(
-                            movie: movie,
-                            isSaved: savedMoviesIds.contains(movie.id.toString()),
-                            onTap: () async {
-                              try {
-                                final actores = await TMDbApi().fetchMovieActors(movie.id);
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => MovieDetailsScreen(
-                                      movie: movie,
-                                      actors: actores,
-                                    ),
-                                  ),
-                                );
-                              } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Error al cargar actores: $e')),
-                                );
-                              }
+                          return StreamBuilder<QuerySnapshot>(
+                            stream: FirebaseFirestore.instance
+                                .collection('resenias')
+                                .where('movieId', isEqualTo: movie.id.toString())
+                                .snapshots(),
+                            builder: (context, reseniasSnapshot) {
+                              final reseniasCount = reseniasSnapshot.data?.docs.length ?? 0;
+                              return MovieListItem(
+                                movie: movie,
+                                isSaved: savedMoviesIds.contains(movie.id.toString()),
+                                reseniasCount: reseniasCount,
+                                onTap: () async {
+                                  try {
+                                    final actores = await TMDbApi().fetchMovieActors(movie.id);
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => MovieDetailsScreen(
+                                          movie: movie,
+                                          actors: actores,
+                                        ),
+                                      ),
+                                    );
+                                  } catch (e) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('Error al cargar actores: $e')),
+                                    );
+                                  }
+                                },
+                                onGuardar: () => _guardarEnMiLista(movie),
+                                onResenias: null,
+                              );
                             },
-                            onGuardar: () => _guardarEnMiLista(movie),
-                            onResenias: null,
                           );
                         },
                       );

@@ -81,33 +81,43 @@ class MiListaScreen extends StatelessWidget {
                 itemCount: movies.length,
                 itemBuilder: (context, index) {
                   final movie = movies[index];
-                  return MovieListItem(
-                    movie: movie,
-                    isSaved: true, // ¡Parámetro requerido añadido!
-                    onTap: () async {
-                      if (!builderContext.mounted) return;
-                      try {
-                        final actores = await TMDbApi().fetchMovieActors(movie.id);
-                        if (!builderContext.mounted) return;
-                        Navigator.push(
-                          builderContext,
-                          MaterialPageRoute(
-                            builder: (_) => MovieDetailsScreen(
-                              movie: movie,
-                              actors: actores,
-                            ),
-                          ),
-                        );
-                      } catch (e) {
-                        if (!builderContext.mounted) return;
-                        ScaffoldMessenger.of(builderContext).showSnackBar(
-                          SnackBar(content: Text('Error al cargar actores: $e')),
-                        );
-                      }
+                  return StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance
+                        .collection('resenias')
+                        .where('movieId', isEqualTo: movie.id.toString())
+                        .snapshots(),
+                    builder: (context, reseniasSnapshot) {
+                      final reseniasCount = reseniasSnapshot.data?.docs.length ?? 0;
+                      return MovieListItem(
+                        movie: movie,
+                        isSaved: true,
+                        reseniasCount: reseniasCount, 
+                        onTap: () async {
+                          if (!builderContext.mounted) return;
+                          try {
+                            final actores = await TMDbApi().fetchMovieActors(movie.id);
+                            if (!builderContext.mounted) return;
+                            Navigator.push(
+                              builderContext,
+                              MaterialPageRoute(
+                                builder: (_) => MovieDetailsScreen(
+                                  movie: movie,
+                                  actors: actores,
+                                ),
+                              ),
+                            );
+                          } catch (e) {
+                            if (!builderContext.mounted) return;
+                            ScaffoldMessenger.of(builderContext).showSnackBar(
+                              SnackBar(content: Text('Error al cargar actores: $e')),
+                            );
+                          }
+                        },
+                        onGuardar: () {},
+                        onEliminar: () => _eliminarDeMiLista(builderContext, movie),
+                        onResenias: null,
+                      );
                     },
-                    onGuardar: () {},
-                    onEliminar: () => _eliminarDeMiLista(builderContext, movie),
-                    onResenias: null,
                   );
                 },
               );
