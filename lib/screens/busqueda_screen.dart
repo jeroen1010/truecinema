@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,7 +19,9 @@ class _BusquedaScreenState extends State<BusquedaScreen> {
   List<Movie> _allMovies = [];
   List<Movie> _filteredMovies = [];
   bool _isLoading = true;
+  bool _isSearching = false;
   late Stream<QuerySnapshot> _savedMoviesStream;
+  Timer? _debounceTimer;
 
   @override
   void initState() {
@@ -55,14 +58,37 @@ class _BusquedaScreenState extends State<BusquedaScreen> {
     }
   }
 
-  void _onSearchChanged(String query) {
-    setState(() {
-      _filteredMovies = _allMovies
-          .where((movie) =>
-              movie.title.toLowerCase().contains(query.toLowerCase()))
-          .toList();
-    });
-  }
+void _onSearchChanged(String query) {
+  if (_debounceTimer?.isActive ?? false) _debounceTimer?.cancel();
+  
+  _debounceTimer = Timer(const Duration(milliseconds: 500), () async {
+    if (query.isEmpty) {
+      setState(() {
+        _isSearching = false;
+        _filteredMovies = _allMovies;
+      });
+      return;
+    }
+    
+    setState(() => _isSearching = true);
+    
+    try {
+      final List<Movie> results = await MovieService.searchMovies(query); // Tipo explícito
+      setState(() => _filteredMovies = results);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error en búsqueda: ${e.toString()}')),
+      );
+      // Fallback local mejorado
+      setState(() {
+        _filteredMovies = _allMovies
+            .where((m) => m.title.toLowerCase().contains(query.toLowerCase()))
+            .toList();
+      });
+    }
+    setState(() => _isSearching = false);
+  });
+}
 
   void _guardarEnMiLista(Movie movie) async {
     final user = FirebaseAuth.instance.currentUser;
@@ -89,6 +115,12 @@ class _BusquedaScreenState extends State<BusquedaScreen> {
   }
 
   @override
+  void dispose() {
+    _debounceTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MainScaffold(
       estadoIndex: 1,
@@ -96,61 +128,70 @@ class _BusquedaScreenState extends State<BusquedaScreen> {
       screen: Column(
         children: [
           MovieSearchBar(onChanged: _onSearchChanged),
+          if (_isSearching)
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: LinearProgressIndicator(),
+            ),
           Expanded(
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : StreamBuilder<QuerySnapshot>(
-                    stream: _savedMoviesStream,
-                    builder: (context, savedSnapshot) {
-                      final savedMoviesIds = savedSnapshot.hasData
-                          ? Set.from(savedSnapshot.data!.docs.map((doc) => doc.id))
-                          : <String>{};
-
-                      return ListView.builder(
-                        itemCount: _filteredMovies.length,
-                        itemBuilder: (context, index) {
-                          final movie = _filteredMovies[index];
-                          return StreamBuilder<QuerySnapshot>(
-                            stream: FirebaseFirestore.instance
-                                .collection('resenias')
-                                .where('movieId', isEqualTo: movie.id.toString())
-                                .snapshots(),
-                            builder: (context, reseniasSnapshot) {
-                              final reseniasCount = reseniasSnapshot.data?.docs.length ?? 0;
-                              return MovieListItem(
-                                movie: movie,
-                                isSaved: savedMoviesIds.contains(movie.id.toString()),
-                                reseniasCount: reseniasCount,
-                                onTap: () async {
-                                  try {
-                                    final actores = await TMDbApi().fetchMovieActors(movie.id);
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => MovieDetailsScreen(
-                                          movie: movie,
-                                          actors: actores,
-                                        ),
-                                      ),
-                                    );
-                                  } catch (e) {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Error al cargar actores: $e')),
-                                    );
-                                  }
-                                },
-                                onGuardar: () => _guardarEnMiLista(movie),
-                                onResenias: null,
-                              );
-                            },
-                          );
-                        },
-                      );
-                    },
-                  ),
+                : _buildMovieList(),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildMovieList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _savedMoviesStream,
+      builder: (context, savedSnapshot) {
+        final savedMoviesIds = savedSnapshot.hasData
+            ? Set.from(savedSnapshot.data!.docs.map((doc) => doc.id))
+            : <String>{};
+
+        return ListView.builder(
+          itemCount: _filteredMovies.length,
+          itemBuilder: (context, index) {
+            final movie = _filteredMovies[index];
+            return StreamBuilder<QuerySnapshot>(
+              stream: FirebaseFirestore.instance
+                  .collection('resenias')
+                  .where('movieId', isEqualTo: movie.id.toString())
+                  .snapshots(),
+              builder: (context, reseniasSnapshot) {
+                final reseniasCount = reseniasSnapshot.data?.docs.length ?? 0;
+                return MovieListItem(
+                  movie: movie,
+                  isSaved: savedMoviesIds.contains(movie.id.toString()),
+                  reseniasCount: reseniasCount,
+                  onTap: () async {
+                    try {
+                      final actores = await TMDbApi().fetchMovieActors(movie.id);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MovieDetailsScreen(
+                            movie: movie,
+                            actors: actores,
+                          ),
+                        ),
+                      );
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Error al cargar actores: $e')),
+                      );
+                    }
+                  },
+                  onGuardar: () => _guardarEnMiLista(movie),
+                  onResenias: null,
+                );
+              },
+            );
+          },
+        );
+      },
     );
   }
 }
