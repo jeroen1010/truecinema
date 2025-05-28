@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:truecinema/screens/editar_usuario_screen.dart';
 import 'package:truecinema/screens/registro_usuario_screen.dart';
+import 'package:truecinema/screens/resenias_usuarios_screen.dart';
 import 'package:truecinema/services/firebase_services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:truecinema/models/resenia.dart';
 
 enum FiltroUsuario { todos, administradores, usuariosNormales }
 
@@ -89,6 +92,24 @@ class _UsuariosScreenState extends State<UsuariosScreen> {
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Nueva opción para ver reseñas
+              ElevatedButton.icon(
+                icon: const Icon(Icons.reviews),
+                label: const Text('Ver reseñas'),
+                onPressed: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReseniasUsuarioScreen(
+                        userId: usuario['uid'],
+                        userName: '${usuario['nombre']} ${usuario['apellidos']}',
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 10),
               ElevatedButton.icon(
                 icon: const Icon(Icons.edit),
                 label: const Text('Editar'),
